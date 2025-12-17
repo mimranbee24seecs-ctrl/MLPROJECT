@@ -1,4 +1,4 @@
-# MLPROJECT
+# Machine Learning Project
 By: Filza Fatima (506785), Ammar Imran (501062)
 # Project Report: Dog Breed Identification Using Deep Learning and Hybrid Approaches
 
