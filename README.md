@@ -1,9 +1,8 @@
 # Machine Learning Project
-By: Filza Fatima (506785), Ammar Imran (501062)
-# Project Report: Dog Breed Identification Using Deep Learning and Hybrid Approaches
+By: Filza Fatima (506785), Ammar Imran (501062)# Project Report: Dog Breed Identification Using Deep Learning and Hybrid Approaches
 
 ## 1. Introduction
-The objective of this project is to build a machine learning system capable of identifying the breed of a dog from an image. We are using the "Dog Breed Identification" dataset, which contains 120 different breeds (https://www.kaggle.com/competitions/dog-breed-identification/data).
+The objective of this project is to build a machine learning system capable of identifying the breed of a dog from an image. We are using the "Dog Breed Identification" dataset, which contains 120 different breeds.
 
 This is a challenging computer vision problem because:
 1.  **High Similarity:** Many breeds look almost identical (e.g., a Husky vs. a Malamute).
@@ -27,11 +26,17 @@ To solve this, we implemented two approaches:
 
 ### 2.2 Feature Engineering (The "Hybrid" Approach)
 Classical algorithms (like SVMs) cannot "see" images directly; they get confused by raw pixels. To satisfy the requirement for **Classical Machine Learning**, we used a technique called **Feature Extraction**.
-
-* **How it works:** We used our Deep Learning model as a "translator."
 * **The Process:** We passed every image through the neural network but stopped it *before* it made a final decision.
-* **The Result:** Instead of an image, we get a list of **4,032 numbers** (a feature vector) for every dog. These numbers represent high-level concepts like "floppy ears," "long snout," or "curly fur."
+* **The Result:** Instead of an image, we get a list of **4,032 numbers** (a feature vector) for every dog. These numbers represent high-level concepts like "floppy ears" or "curly fur."
 * We then fed these "smart features" into our classical algorithms (SVM and Random Forest).
+
+### 2.3 Development Challenges & Resource Optimization
+A significant challenge during the development phase was **Memory Management**.
+* **Initial Attempt (VS Code):** Initially, we developed the project locally using VS Code. The strategy involved loading the entire dataset into massive NumPy arrays (`X_train`, `y_train`).
+* **The Problem:** Storing thousands of high-resolution images ($331 \times 331 \times 3$) as floating-point numbers in a single NumPy block required over 16GB of RAM. This exceeded the memory limits of standard Google Colab instances and caused frequent system crashes ("Out of Memory" errors).
+* **The Solution:** We migrated from static NumPy arrays to TensorFlow’s `ImageDataGenerator`.
+    * Instead of loading all images at once, the Generator loads images in small "batches" (e.g., 8 images at a time) strictly when the GPU needs them.
+    * This allowed us to train a very deep model (NASNetLarge) on limited hardware without crashing the session.
 
 ---
 
@@ -42,24 +47,21 @@ We utilized **Transfer Learning** with the **NASNetLarge** architecture, which w
 
 * **Architecture Breakdown:**
     * **Base (NASNetLarge):** This is the "eye" of the model. We froze its weights so it retains the knowledge it learned from millions of other images.
-    * **Global Average Pooling:**
-        * *Simple Explanation:* The base model outputs a complex 3D block of data. Pooling "squashes" this block into a flat list of numbers by taking the average. This drastically reduces the number of parameters (memory usage) and prevents the model from memorizing the training data (overfitting).
-    * **Prediction Layer:** A Dense layer with 120 neurons (one for each breed) using `softmax` activation to output probabilities (e.g., "95% chance it's a Beagle").
+    * **Global Average Pooling:** This "squashes" the complex 3D data block into a flat list of numbers. This drastically reduces the number of parameters and prevents overfitting compared to the Flatten layer.
+    * **Prediction Layer:** A Dense layer with 120 neurons (one for each breed) using `softmax` activation to output probabilities.
 
 * **Training Configuration:**
-    * **Optimizer:** `Adam` (Adaptive Moment Estimation). It automatically adjusts how fast the model learns.
-    * **Callbacks:**
-        * `EarlyStopping`: Monitors validation accuracy and stops training if the model stops improving.
-        * `ReduceLROnPlateau`: If the model gets stuck, this lowers the learning rate to help it fine-tune its results.
+    * **Optimizer:** `Adam` (Adaptive Moment Estimation).
+    * **Callbacks:** We used `EarlyStopping` to prevent wasted training time and `ReduceLROnPlateau` to fine-tune the learning rate dynamically.
 
 ### 3.2 Classical Machine Learning
 We implemented two classical algorithms using the features extracted by NASNet:
 
 1.  **Support Vector Machine (SVM):**
-    * *Concept:* Imagine plotting every dog on a graph based on its features. The SVM tries to draw straight lines (hyperplanes) to separate the different breeds.
-    * *Configuration:* We used a linear kernel, which is efficient for high-dimensional data.
+    * *Concept:* Plots every dog on a high-dimensional graph and draws straight lines (hyperplanes) to separate the breeds.
+    * *Configuration:* Used a linear kernel, which is efficient for high-dimensional feature vectors.
 2.  **Random Forest:**
-    * *Concept:* This creates a "forest" of 100 decision trees. Each tree asks a series of Yes/No questions about the features (e.g., "Is the ear value > 0.5?"). The final decision is based on a majority vote from all trees.
+    * *Concept:* Creates a "forest" of 100 decision trees. The final decision is based on a majority vote from all trees.
 
 ---
 
@@ -80,5 +82,7 @@ We implemented two classical algorithms using the features extracted by NASNet:
 ### 4.3 Conclusion
 This project successfully met all requirements:
 1.  **Deep Learning:** We implemented a state-of-the-art CNN that achieved high accuracy.
+2.  **Classical ML:** We successfully used Feature Extraction to train SVM and Random Forest models.
+3.  **Optimization:** We successfully refactored the data pipeline from memory-heavy NumPy arrays to efficient Generators to function within the Colab environment.
 2.  **Classical ML:** We successfully used Feature Extraction to train SVM and Random Forest models.
 3.  **Evaluation:** We compared multiple models and found that while Classical methods work well with good features, **Deep Learning is statistically superior** for image classification tasks.
