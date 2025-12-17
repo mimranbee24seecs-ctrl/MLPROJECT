@@ -3,7 +3,7 @@ By: Filza Fatima (506785), Ammar Imran (501062)
 # Project Report: Dog Breed Identification Using Deep Learning and Hybrid Approaches
 
 ## 1. Introduction
-The objective of this project is to build a machine learning system capable of identifying the breed of a dog from an image. We are using the "Dog Breed Identification" dataset, which contains 120 different breeds.
+The objective of this project is to build a machine learning system capable of identifying the breed of a dog from an image. We are using the "Dog Breed Identification" dataset, which contains 120 different breeds (https://www.kaggle.com/competitions/dog-breed-identification/data).
 
 This is a challenging computer vision problem because:
 1.  **High Similarity:** Many breeds look almost identical (e.g., a Husky vs. a Malamute).
