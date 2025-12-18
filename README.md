@@ -60,17 +60,18 @@ We utilized **NASNetLarge** with a Global Average Pooling layer to reduce dimens
 The project begins by connecting to Kaggle to fetch the images and labels.
 
 **Technical Snippet:**
-# Upload kaggle.json to authenticate
+#### Upload kaggle.json to authenticate
 if not os.path.exists('/content/kaggle.json'):
     files.upload()
 
-# Download and unzip the Dog Breed dataset
+#### Download and unzip the Dog Breed dataset
 !kaggle competitions download -c dog-breed-identification
 !unzip -q dog-breed-identification.zip -d /content/dog_data
 
 This authenticates the session using a Kaggle API key, downloads the raw image data and labels directly into the temporary workspace
 
-# Create Data Generator (Normalization & Validation Split)
+#####
+Create Data Generator (Normalization & Validation Split)
 datagen = ImageDataGenerator(rescale=1./255, validation_split=0.3)
 
 #### Training & Validation Generators (Batching)
