@@ -75,6 +75,11 @@ We evaluated the models using **Macro-Averaging** to ensure that performance on 
 | **SVM (Linear)** | ~86% | 0.87 | 0.85 | 0.86 |
 | **Random Forest** | ~72% | 0.75 | 0.71 | 0.72 |
 
+<img width="1007" height="548" alt="image" src="https://github.com/user-attachments/assets/aa314fb6-2ebe-4335-ad62-773ee9c9e879" />
+
+<img width="741" height="149" alt="image" src="https://github.com/user-attachments/assets/3fe1c247-719d-4d71-9459-07aecd06c6a7" />
+
+
 ### 5.2 Comparative Analysis
 Our visual analysis confirmed that the **Deep Learning CNN** maintains a lead across all four metrics. However, the **SVM** followed closely, proving that the features extracted by the NASNet "brain" are highly robust and linearly separable even without a neural classifier.
 
