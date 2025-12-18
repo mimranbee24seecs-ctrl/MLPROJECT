@@ -56,6 +56,37 @@ We addressed Google Colab’s ephemeral nature by mounting Google Drive and impl
 ### 4.1 Deep Learning (CNN)
 We utilized **NASNetLarge** with a Global Average Pooling layer to reduce dimensionality and a Softmax output layer for the 120-class classification.
 
+#### Environment Setup and Data Acquisition
+The project begins by connecting to Kaggle to fetch the images and labels.
+
+**Technical Snippet:**
+# Upload kaggle.json to authenticate
+if not os.path.exists('/content/kaggle.json'):
+    files.upload()
+
+# Download and unzip the Dog Breed dataset
+!kaggle competitions download -c dog-breed-identification
+!unzip -q dog-breed-identification.zip -d /content/dog_data
+
+This authenticates the session using a Kaggle API key, downloads the raw image data and labels directly into the temporary workspace
+
+# Create Data Generator (Normalization & Validation Split)
+datagen = ImageDataGenerator(rescale=1./255, validation_split=0.3)
+
+#### Training & Validation Generators (Batching)
+train_generator = datagen.flow_from_dataframe(
+    dataframe=df,
+    directory='/content/dog_data/train',
+    x_col="id",
+    y_col="breed",
+    subset="training",
+    target_size=(331, 331),
+    class_mode="categorical"
+)
+What this does:
+- Normalization: Converts pixel values (0–255) to a 0–1 range to speed up training.
+- Conveyor Belt System (Generators): Instead of loading all 10,000+ images into RAM (which would crash the system), the code loads them in small "batches" of 8 or 32 at a time.
+- Resizing: Every photo is resized to 331x331 pixels to fit the NASNetLarge input requirements.
 
 
 ### 4.2 Classical Models (Hybrid Approach)
